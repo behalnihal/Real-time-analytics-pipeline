@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: high_loan
+    config:
+      connector_properties:
+        topic: "high-loan"
+  - name: joined_data
+    config:
+      materialized: view
+  - name: joined_data_output
+    config:
+      connector_properties:
+        topic: "joined-data"
+  - name: daily_spending
+    config:
+      type: streaming
+      connector_properties:
+        topic: "daily-spending"

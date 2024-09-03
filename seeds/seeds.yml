@@ -1,0 +1,12 @@
+version: 2
+
+seeds:
+  - name: clickstream
+    config:
+      connector_properties:
+        topic: "clickstream"
+
+  - name: trx
+    config:
+      connector_properties:
+        topic: "trx"

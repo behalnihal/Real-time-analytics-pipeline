@@ -1,0 +1,40 @@
+version: 2
+sources:
+  - name: kafka
+    tables:
+      - name: clickstream
+        config:
+          connector_properties:
+            topic: "clickstream"
+          watermark:
+            column: event_timestamp
+            strategy: event_timestamp
+        columns:
+          - name: event_timestamp
+            data_type: TIMESTAMP(3)
+          - name: user_id
+            data_type: DECIMAL
+          - name: event
+            data_type: STRING
+      - name: trx
+        config:
+          connector_properties:
+            topic: "trx"
+          watermark:
+            column: event_timestamp
+            strategy: event_timestamp
+        columns:
+          - name: event_timestamp
+            data_type: TIMESTAMP(3)
+          - name: user_id
+            data_type: DECIMAL
+          - name: source
+            data_type: STRING
+          - name: target
+            data_type: STRING
+          - name: amount
+            data_type: DECIMAL
+          - name: deposit_balance_after_trx
+            data_type: DECIMAL
+          - name: credit_balance_after_trx
+            data_type: DECIMAL
