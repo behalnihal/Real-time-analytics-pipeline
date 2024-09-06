@@ -35,6 +35,55 @@ schema (Flink database) [default_database]:
 threads (1 or more) [1]:
 ```
 
+We also need an Apache **Flink** instance with SQL Gateway and for the purpose of this tutorial a one node instance of **Apache Kafka**. 
+
+```bash
+$ curl -o docker-compose.yml https://raw.githubusercontent.com/gliter/dbt-flink-adapter-example/main/docker-compose.yml
+```
+
+Now download the flink-sql-connector-kafka jar file from maven OR [Download from here](https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kafka/1.16.0/flink-sql-connector-kafka-1.16.0.jar) and go to the same directory as the docker-compose file, create a folder named flink-lib and move this file in the 'flink-lib' folder.
+
+Now run the compose file by the command 
+
+```bash
+$ docker-compose up
+```
+
+Create `clickstream`, `init-balance`, `trx, high-loan`, `joined-data`, `daily-spending` topics in **Kafka**
+
+```bash
+$ curl -o recreate-topics.sh https://raw.githubusercontent.com/gliter/dbt-flink-adapter-example/main/recreate-topics.sh
+```
+
+run the command 
+```bash
+docker ps
+```
+
+this will display the docker container names , copy the name of the kafka instance , then run the command 
+```bash
+docker exec [kafka instance name] chmod +x recreate-topics.sh
+docker exec [kafka instance name] ./recreate-topics.sh
+```
+
+after this you should have all the required docker containers , and the kakfa topics.
+you can also see the kafka topics by running the command , 
+```bash
+docker exec [kafka instance name] kafka-topics --bootstrap-server localhost:9092 --list
+```
+You can also open [http://localhost:8081](http://localhost:8081/) in your browser to see running **Apache Flink** instance
+
+Now, make the models given in the models folder. and run the model by, 
+```bash
+dbt run
+```
+We can now open **Flink** UI [http://localhost:8081/](http://localhost:8081/) and we should see 3 jobs deployed.
+
+![image](https://github.com/user-attachments/assets/4b146feb-ce8e-432d-a1b3-ced3714d780f)
+
+### Input
+
+dbt supports seed functionality that allows for loading data stored in csv into tables. In our case this will use the Flink Kafka connector to load data into Kafka topics.
 
 
 ### Using the starter project
