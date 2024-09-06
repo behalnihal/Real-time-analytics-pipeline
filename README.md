@@ -84,7 +84,35 @@ We can now open **Flink** UI [http://localhost:8081/](http://localhost:8081/)
 ### Input
 
 dbt supports seed functionality that allows for loading data stored in csv into tables. In our case this will use the Flink Kafka connector to load data into Kafka topics.
+Copy the csv files from the seed folder and execute.
+```bash
+dbt seed
+```
 
+You can also notice in **Flink** UI 2 completed jobs that were used to insert data into **Kafka** topics.
+
+![image](https://github.com/user-attachments/assets/3c3e9e12-049c-4f65-bb28-445852e835e4)
+
+
+## Output
+
+Once data is pushed into input **Kafka** topics, your already deployed pipelines should process them and emit events into output topics.
+
+```bash
+$ docker run --net=host confluentinc/cp-kafka:latest kafka-console-consumer --bootstrap-server localhost:9092 --topic high-loan --from-beginning 
+{"event_timestamp":"2022-11-28T22:42:42.762","user_id":1,"source":"credit","target":"deposit","amount":7051,"deposit_balance_after_trx":12399,"credit_balance_after_trx":-15675}
+{"event_timestamp":"2022-12-01T08:39:42.762","user_id":6,"source":"credit","target":"deposit","amount":7617,"deposit_balance_after_trx":18545,"credit_balance_after_trx":-16185}
+...
+
+$ docker run --net=host confluentinc/cp-kafka:latest kafka-console-consumer --bootstrap-server localhost:9092 --topic joined-data --from-beginning 
+{"event_timestamp":"2022-11-28T22:42:42.762","user_id":1,"event":"take_loan","source":"credit","target":"deposit","amount":7051,"deposit_balance_after_trx":12399,"credit_balance_after_trx":-15675}
+{"event_timestamp":"2022-11-28T23:35:42.762","user_id":9,"event":"income","source":"ext","target":"deposit","amount":1332,"deposit_balance_after_trx":3419,"credit_balance_after_trx":-7826}
+...
+
+$ docker run --net=host confluentinc/cp-kafka:latest kafka-console-consumer --bootstrap-server localhost:9092 --topic daily-spending --from-beginning 
+{"window_start":"2022-11-29T00:00:00","window_end":"2022-11-30T00:00:00","user_id":7,"daily_spending":72}
+{"window_start":"2022-11-29T00:00:00","window_end":"2022-11-30T00:00:00","user_id":1,"daily_spending":112}
+```
 
 
 ### Resources:
