@@ -86,12 +86,6 @@ We can now open **Flink** UI [http://localhost:8081/](http://localhost:8081/)
 dbt supports seed functionality that allows for loading data stored in csv into tables. In our case this will use the Flink Kafka connector to load data into Kafka topics.
 
 
-### Using the starter project
-
-Try running the following commands:
-- dbt run
-- dbt test
-
 
 ### Resources:
 - Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
